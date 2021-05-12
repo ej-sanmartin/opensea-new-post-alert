@@ -11,6 +11,8 @@
   "dependencies": {
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
+    "image-downloader": "^4.0.2",
+    "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.0"
   }
 }
