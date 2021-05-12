@@ -47,7 +47,18 @@ download.image(imageDownloaderOptions)
   .catch((err) => console.error(`Error downloading image :${err}`));
 
 // create .mdx file
-const mdxFileContent = ``;
+const mdxFileContent = `
+  ---\n
+  cover: ${cover}\n
+  date: ${date}\n
+  title: ${title}\n
+  areas:\n
+    ${place}\n
+    ${place}\n
+  ---\n
+  \n
+  ${description}
+`;
 
 try {
   const data = fs.writeFileSync(`${storageDirectory}/index.mdx`, mdxFileContent);
