@@ -10,6 +10,10 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
+// start the server listening for requests, using deployment option's port or locally
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log("Server is running..."));
+
 // Setting up nodemailer to send to my email directly
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -21,6 +25,15 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// constructor method for data to be retrieved from API
+function NFT(imageURL, date, title, externalLink, description){
+  this.imageURL = imageURL;
+  this.date = date;
+  this.title = title;
+  this.externalLink = externalLink;
+  this.description = description;
+}
+
 // where to save everything
 const storageDirectory = process.env.STORAGEDIRECTORY;
 
@@ -30,7 +43,9 @@ const openSeaAPIOptions = { method: 'GET', headers: {Accept: 'application/json'}
 
 fetch(url, options)
   .then(res => res.json())
-  .then(json => console.log(json)) // here save into an object to be used in the rest of the file
+  .then(json => {
+    console.log(json)
+  })
   .catch(err => console.error(`Error fetching from OpenSea API: ${err}`));
 
 // image downloader setup and application
@@ -49,12 +64,11 @@ download.image(imageDownloaderOptions)
 // create .mdx file
 const mdxFileContent = `
   ---\n
-  cover: ${cover}\n
+  cover: ${imageURL}\n
   date: ${date}\n
   title: ${title}\n
   areas:\n
-    ${place}\n
-    ${place}\n
+    ${externalLink}\n
   ---\n
   \n
   ${description}
@@ -66,10 +80,6 @@ try {
 } catch(err){
   console.error()
 }
-
-// start the server listening for requests, using deployment option's port or locally
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log("Server is running..."));
 
 // nodemailer function to send email to myself whenever a new NFT is collected
 async function sendFormattedNFTProject(nftInfo, callback){
