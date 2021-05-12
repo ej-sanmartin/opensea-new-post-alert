@@ -18,8 +18,9 @@ The Gatsby Theme I am using didn't have many easy ways to fetch an API to the si
 ## Tech (so far)
 ---
 - Express
-- Body-Parser
-- Dotenv
+- Fetch
+- Image-Downloader
+- Moment
 - Nodemailer
 
 

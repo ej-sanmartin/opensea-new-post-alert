@@ -76,8 +76,7 @@ download.image(imageDownloaderOptions)
   .catch((err) => console.error(`Error downloading image :${err}`));
 
 // create .mdx file
-const mdxFileContent = `
-  ---\n
+const mdxFileContent = ` ---\n
   cover: ./${nftData.title}.\n
   date: ${nftData.date}\n
   title: ${nftData.title}\n
