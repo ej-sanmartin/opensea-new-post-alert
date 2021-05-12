@@ -3,6 +3,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const fetch = require('node-fetch');
 const download = require('image-downloader');
+const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 
@@ -25,33 +26,46 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// constructor method for data to be retrieved from API
-function NFT(imageURL, date, title, externalLink, description){
-  this.imageURL = imageURL;
-  this.date = date;
-  this.title = title;
-  this.externalLink = externalLink;
-  this.description = description;
-}
+// initializing empty object
+let nftData = {};
 
 // where to save everything
 const storageDirectory = process.env.STORAGEDIRECTORY;
+const folderName = path.join(__dirname, storageDirectory);
 
-// fetching from OpenSea.io API
-const openSeaAPIUrl = ``;
-const openSeaAPIOptions = { method: 'GET', headers: {Accept: 'application/json'}};
+try {
+  if(!fs.existsSync(folderName)){ fs.mkdirSync(folderName); }
+} catch(err) {
+  console.error(`Error creating new folder: ${err}`);
+}
 
-fetch(url, options)
+// setup for OpenSea.io API
+const openSeaAPIUrl = `https://api.opensea.io/api/v1/assets?owner=${process.env.ETH_ADDRESS}`;
+const openSeaAPIOptions = { method: 'GET' };
+
+// get todays date
+nftData.date = moment().format('YYYY-MM-DD');
+
+// Actually fetching OpenSea.io API
+function callOpenSeaAPI(){
+  fetch(openSeaAPIUrl, openSeaAPIOptions)
   .then(res => res.json())
   .then(json => {
-    console.log(json)
+    console.log(json);
+    // nftData.imageURL = json.image_url;
+    // nftData.title = json.name;
+    // nftData.externalLink = json.external_link;
+    // nftData.description = json.description;
   })
   .catch(err => console.error(`Error fetching from OpenSea API: ${err}`));
+}
+
+callOpenSeaAPI();
 
 // image downloader setup and application
 const imageDownloaderOptions = {
-  url: ``,
-  dest: storageDirectory,
+  url: `${nftData.imageURL}`,
+  dest: folderName,
   timeout: process.env.TIMEOUT
 }
 
@@ -64,22 +78,23 @@ download.image(imageDownloaderOptions)
 // create .mdx file
 const mdxFileContent = `
   ---\n
-  cover: ${imageURL}\n
-  date: ${date}\n
-  title: ${title}\n
-  areas:\n
-    ${externalLink}\n
+  cover: ./${nftData.title}.\n
+  date: ${nftData.date}\n
+  title: ${nftData.title}\n
+  areas:\
+    ${nftData.externalLink}\n
   ---\n
   \n
-  ${description}
+  ${nftData || nftData.description ? nftData.description : ``}
 `;
 
-try {
-  const data = fs.writeFileSync(`${storageDirectory}/index.mdx`, mdxFileContent);
-  console.log(`Successfully created mdx file! Here are its contents: ${mdxFileContent} \n Here is the code that was ran through: ${data}`);
-} catch(err){
-  console.error()
-}
+fs.writeFile(`${folderName}/index.mdx`, mdxFileContent, err => {
+  if(err) {
+    console.error(`Error writing new file: ${err}`);
+    return;
+  }
+});
+
 
 // nodemailer function to send email to myself whenever a new NFT is collected
 async function sendFormattedNFTProject(nftInfo, callback){
