@@ -4,39 +4,39 @@ const moment = require('moment');
 const fs = require('fs');
 
 // get todays date
-function setCurrentDate(dataObject){
-    if(typeof dataObject === 'undefined'){
+function setCurrentDate(data){
+    if(typeof data === 'undefined'){
       console.error("No object passed to set the current date to in the setCurrentDate function");
     }
   
-    dataObject.date = moment().format('YYYY-MM-DD');
-    return dataObject;
+    data.date = moment().format('YYYY-MM-DD');
+    return data;
 }
   
-// Actually fetching OpenSea.io API
-function fetchAPI(nftData, url, options){
+// Fetches an API and returns 
+function fetchAPI(data, url, options){
     fetch(url, options)
     .then(res => res.json())
     .then(json => {
-        nftData.imageURL = json.assets[0].image_url;
-        nftData.title = json.assets[0].name;
-        nftData.externalLink = json.assets[0].external_link;
-        nftData.description = json.assets[0].description;
-        nftData.id = json.assets[0].id;
+        data.imageURL = json.assets[0].image_url;
+        data.title = json.assets[0].name;
+        data.externalLink = json.assets[0].external_link;
+        data.description = json.assets[0].description;
+        data.id = json.assets[0].id;
 
-        // console.log(JSON.stringify(nftData));
+        // console.log(JSON.stringify(data));
 
-        return nftData;
+        return data;
     })
     .catch(err => console.error(`Error fetching from OpenSea API: ${err}`));
 }
-  
+
+// image downloader setup and application
 function downloadImageFromURL(url, folderDestination){
     if(typeof url === ('undefine') || url === ''){
       console.error("No URL passed to image download function");
     }
   
-    // image downloader setup and application
     const imageDownloaderOptions = {
       url: `${url}`,
       dest: folderDestination,
@@ -50,13 +50,13 @@ function downloadImageFromURL(url, folderDestination){
     .catch((err) => console.error(`Error downloading image: ${err}`));
 }
   
+// create .mdx file
 function createMDXFile(data, folderDestination){
     if(typeof data === ('undefined') || data === {}){
       console.error("Data passed is undefined or empty.");
       return;
     }
   
-    // create .mdx file
     const mdxFileContent = ` ---\n
         cover: ./${data.title}.\n
         date: ${data.date}\n
