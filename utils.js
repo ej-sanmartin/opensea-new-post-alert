@@ -44,7 +44,7 @@ async function downloadImageFromURL(url, folderDestination, data){
     const imageDownloaderOptions = {
       url: `${url}`,
       dest: folderDestination,
-      timeout: process.env.TIMEOUT
+      timeout: parseInt(process.env.TIMEOUT, 10)
     }
 
     try {
@@ -75,14 +75,15 @@ async function createMDXFile(data, folderDestination){
       return data;
     }
   
-    const mdxFileContent = `---\n
-    cover: ./${data.title}.\n
-    date: ${data.date}\n
-    title: ${data.title}\n
-      areas:\
-        ${data.externalLink}\n
-    ---\n
-    ${data || data.description ? data.description : `No description provided.`}
+    const mdxFileContent =
+    `---\n
+     cover: ./${data.title}.\n
+     date: ${data.date}\n
+     title: ${data.title}\n
+     areas:\
+      ${data.externalLink}\n
+     ---\n
+     ${data || data.description ? data.description : `No description provided.`}
     `;
   
     try {
@@ -108,6 +109,7 @@ async function sendEMailAsync(data, transporter, callback){
     <p>Thank you</p>`,
     attachments: [
       {
+        filename: data.imageFileName,
         path: data.imageFilePath
       },
       {
