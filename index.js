@@ -60,17 +60,15 @@ const task = new AsyncTask(
       nftData = await(downloadImageFromURL(nftData.imageURL, folderName, nftData));
       nftData = await(createMDXFile(nftData, folderName));
       if(nftData.id != lastPostID){
-        sendEMailAsync(nftData, transporter, info => {
-          console.log("Request Sent!");
-        });
+        sendEMailAsync(nftData, transporter, info => console.log("Request Sent!"));
       } else {
         console.log("Did not send an email this time.");
       }
     } catch(e){
-      console.error(e);
+      console.error(console.err(`Error occurred with task: ${e}`));
     } finally {
       lastPostID = nftData.id;
-      // after 20 seconds, plenty of time to email career submission, file will be destroyed from diskStorage to not overload space
+      // after 5 secs, plenty of time to email contents, file will be destroyed from diskStorage to not overload space
       setTimeout(function(){ fse.emptyDirSync(storageDirectory) }, 5000);
     }
   },

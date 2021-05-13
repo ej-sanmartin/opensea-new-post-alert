@@ -23,7 +23,7 @@ async function fetchAPI(data, url, options){
     data.description = response.assets[0].description;
     data.id = response.assets[0].id;
   } catch(e) {
-    console.error(e);
+    console.error(`Error caught fetching from API: ${e}`);
   }
 
   return data;
@@ -52,7 +52,7 @@ async function downloadImageFromURL(url, folderDestination, data){
       data.imageFileName = `${response.filename}.png`;
       data.imageFilePath = response.filename;
     } catch(e){
-      console.error(e);
+      console.error(`Error caught while downloading image from URL: ${e}`);
     }
 
     return data;
@@ -62,7 +62,7 @@ async function downloadImageFromURL(url, folderDestination, data){
 async function createFileAsync(destination, content){
   return (await fs.writeFile(`${destination}/index.mdx`, content, err => {
     if(err) {
-      console.error(err);
+      console.error(`Error occurred while file was being written in async function: ${err}`);
       return;
     }
   }));
@@ -71,7 +71,7 @@ async function createFileAsync(destination, content){
 // create .mdx file
 async function createMDXFile(data, folderDestination){
     if(typeof data === ('undefined') || data === {}){
-      console.error("Data passed is undefined or empty.");
+      console.error("Data passed to create .mdx file is undefined or empty.");
       return data;
     }
   
@@ -91,7 +91,7 @@ async function createMDXFile(data, folderDestination){
       data.mdxFileName = `index.mdx`;
       data.mdxFilePath = `${folderDestination}/${data.mdxFileName}`;
     } catch(e) {
-      console.error(e);
+      console.error(`Error caught trying to create .mdx file: ${e}`);
     }
 
     return data;
@@ -121,7 +121,7 @@ async function sendEMailAsync(data, transporter, callback){
 
   let info = await transporter.sendMail(mailOptions, function(err, info){
     if(err){
-      console.log("Error: " + err);
+      console.log("Error while sending mail from transporter function: " + err);
     } else {
       console.log("Message Sent!");
     }
@@ -130,7 +130,7 @@ async function sendEMailAsync(data, transporter, callback){
   try {
     callback(info)
   } catch(e){
-    console.error(e);
+    console.error(`Error in callback of sending mail function: ${e}`);
   }
 }
   
