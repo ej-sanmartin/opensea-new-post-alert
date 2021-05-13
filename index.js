@@ -4,12 +4,12 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
-var _ = require('lodash');
 const { ToadScheduler, SimpleIntervalJob, AsyncTask } = require('toad-scheduler');
 const { setCurrentDate,
         fetchAPI,
         downloadImageFromURL,
-        createMDXFile } = require('./utils.js');
+        createMDXFile,
+        sendEMailAsync } = require('./utils.js');
 
 // init Express with its own body parser
 const app = express();
@@ -31,9 +31,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // initializing API data variables
-let nftData = {
-  date: ''
-};
+let nftData = {};
 let lastPostID = ``;
 
 // where to save everything
@@ -55,68 +53,26 @@ const openSeaAPIOptions = { method: 'GET' };
 const scheduler = new ToadScheduler();
 const task = new AsyncTask(
   'simple task',
-  () => {
-
-      return new Promise((resolve, reject) => {
-        nftData = fetchAPI(nftData, openSeaAPIUrl, openSeaAPIOptions);
-        resolve(nftData);
-      })
-      .then((result) => {
-        result = setCurrentDate(result);
-        return result;
-      })
-      .then((result) => {
-        result = downloadImageFromURL(result.imageUrl, folderName);
-        return result;
-      })
-      .then((result) => {
-        result = createMDXFile(result, folderName);
-        return result;
-      })
-      .then((result) => {
-        //if(result.id != lastPostID){
-          //console.log("Almost done setting up e-mail!");
-          let mailOptions = {
-            from: "Your NFT Alert Server | OpenSea.io API",
-            to: process.env.EMAIL,
-            subject: "Here is your new NFT post!",
-            html: `<h1>Congrats on the new NFT!</h1>
-                   <p>Edgar, attached is your NFT image and data for your site</p>
-                   <br>
-                   <p>Thank you</p>`,
-            attachments: [
-              {
-                filename: result.imageFileName,
-                path: result.imageFilePath
-              },
-              {
-                filename: result.mdxFileName,
-                path: result.mdxFilePath
-              }
-            ]
-          };
-          nftData = _.clone(result);
-          return mailOptions;
-        //} else { console.log("Did not send email this time."); }
-      })
-      .then(function(result){
-        let info = transporter.sendMail(result)
-        .then((okay) => {
-          return okay;
-        })
-        .catch((error) => {
-          console.error(error);
+  async () => {
+    try {
+      nftData = await(fetchAPI(nftData, openSeaAPIUrl, openSeaAPIOptions));
+      nftData.date = setCurrentDate();
+      nftData = await(downloadImageFromURL(nftData.imageURL, folderName, nftData));
+      nftData = await(createMDXFile(nftData, folderName));
+      if(nftData.id != lastPostID){
+        sendEMailAsync(nftData, transporter, info => {
+          console.log("Request Sent!");
         });
-        return nftData;
-      })
-      .then((result) => {
-        lastPostID = result.id;
-        return result;
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  
+      } else {
+        console.log("Did not send an email this time.");
+      }
+    } catch(e){
+      console.error(e);
+    } finally {
+      lastPostID = nftData.id;
+      // after 20 seconds, plenty of time to email career submission, file will be destroyed from diskStorage to not overload space
+      setTimeout(function(){ fse.emptyDirSync(storageDirectory) }, 5000);
+    }
   },
   (err) => { console.error(`Roadblock hit: ${err}`); }
 );
