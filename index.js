@@ -3,6 +3,7 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
+const fse = require('fs-extra');
 const { setCurrentDate,
         fetchAPI,
         downloadImageFromURL,

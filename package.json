@@ -4,16 +4,20 @@
   "description": "Creates folders and alerts me via email whenever my account acquires a new NFT",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Edgar J San Martin",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^9.0.2",
     "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
     "image-downloader": "^4.0.2",
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
   }
 }
