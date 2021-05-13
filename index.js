@@ -6,6 +6,7 @@ const download = require('image-downloader');
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
+const { type } = require('os');
 
 // Init Express with body parser
 const app = express();
@@ -26,8 +27,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// initializing empty object
+// initializing empty objects
 let nftData = {};
+let lastPost = {};
 
 // where to save everything
 const storageDirectory = process.env.STORAGEDIRECTORY;
@@ -44,64 +46,88 @@ const openSeaAPIUrl = `https://api.opensea.io/api/v1/assets?owner=${process.env.
 const openSeaAPIOptions = { method: 'GET' };
 
 // get todays date
-nftData.date = moment().format('YYYY-MM-DD');
+function setCurrentDate(dataObject){
+  if(typeof dataObject === 'undefined'){
+    console.error("No object passed to set the current date to in the setCurrentDate function");
+  }
+
+  dataObject.date = moment().format('YYYY-MM-DD');
+  return dataObject;
+}
 
 // Actually fetching OpenSea.io API
 function callOpenSeaAPI(){
   fetch(openSeaAPIUrl, openSeaAPIOptions)
   .then(res => res.json())
   .then(json => {
-    console.log(`This is the json data: ${JSON.stringify(json, null, `\t`)}`);
-    // nftData.imageURL = json.image_url;
-    // nftData.title = json.name;
-    // nftData.externalLink = json.external_link;
-    // nftData.description = json.description;
+    // console.log(`This is the json data: ${JSON.stringify(json.assets[0], null, `\t`)}`);
+    nftData.imageURL = json.assets[0].image_url;
+    nftData.title = json.assets[0].name;
+    nftData.externalLink = json.assets[0].external_link;
+    nftData.description = json.assets[0].description;
+    nftData.id = json.assets[0].id;
+    console.log(JSON.stringify(nftData, null, `\t`));
   })
   .catch(err => console.error(`Error fetching from OpenSea API: ${err}`));
 }
 
 callOpenSeaAPI();
 
-// image downloader setup and application
-const imageDownloaderOptions = {
-  url: `${nftData.imageURL}`,
-  dest: folderName,
-  timeout: process.env.TIMEOUT
+function downloadImageFromURL(url){
+  if(typeof url === ('undefine') || url === ''){
+    console.error("No URL passed to image download function");
+  }
+
+  // image downloader setup and application
+  const imageDownloaderOptions = {
+    url: `${url}`,
+    dest: folderName,
+    timeout: process.env.TIMEOUT
+  }
+
+  download.image(imageDownloaderOptions)
+  .then(({ filename }) => {
+    console.log("Saved to: ", filename)
+  })
+  .catch((err) => console.error(`Error downloading image: ${err}`));
 }
 
-download.image(imageDownloaderOptions)
-  .then(({ filename }) => {
-    console.log("Saved to ", filename)
-  })
-  .catch((err) => console.error(`Error downloading image :${err}`));
+function createMDXFile(data){
+  if(typeof data === ('undefined') || data === {}){
+    console.error("Data passed is undefined or empty.");
+    return;
+  }
 
-// create .mdx file
-const mdxFileContent = ` ---\n
-  cover: ./${nftData.title}.\n
-  date: ${nftData.date}\n
-  title: ${nftData.title}\n
-  areas:\
-    ${nftData.externalLink}\n
-  ---\n
-  \n
-  ${nftData || nftData.description ? nftData.description : ``}
-`;
+  // create .mdx file
+  const mdxFileContent = ` ---\n
+    cover: ./${data.title}.\n
+    date: ${data.date}\n
+    title: ${data.title}\n
+    areas:\
+      ${data.externalLink}\n
+    ---\n
+    \n
+    ${data || data.description ? data.description : `No description provided.`}
+    `;
 
-fs.writeFile(`${folderName}/index.mdx`, mdxFileContent, err => {
+  fs.writeFile(`${folderName}/index.mdx`, mdxFileContent, err => {
   if(err) {
     console.error(`Error writing new file: ${err}`);
     return;
   }
-});
+  });
+} 
 
 
 // nodemailer function to send email to myself whenever a new NFT is collected
 async function sendFormattedNFTProject(nftInfo, callback){
   let mailOptions = {
-    from: "Your NFT Alert server | OpenSea.io API",
+    from: "Your NFT Alert Server | OpenSea.io API",
     to: process.env.EMAIL,
-    subject: "Here is your updated NFT collection!",
-    html: `<h1>Edgar, attached is your NFT image and data for your site<br>
+    subject: "Here is your new NFT post!",
+    html: `<h1>Congrats on the new NFT!</h1>
+           <p>Edgar, attached is your NFT image and data for your site</p>
+           <br>
            <p>Thank you</p>`,
     attachments: [
       {
