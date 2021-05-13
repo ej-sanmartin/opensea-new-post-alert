@@ -51,7 +51,7 @@ function callOpenSeaAPI(){
   fetch(openSeaAPIUrl, openSeaAPIOptions)
   .then(res => res.json())
   .then(json => {
-    console.log(json);
+    console.log(`This is the json data: ${JSON.stringify(json, null, `\t`)}`);
     // nftData.imageURL = json.image_url;
     // nftData.title = json.name;
     // nftData.externalLink = json.external_link;
