@@ -3,17 +3,18 @@ const download = require('image-downloader');
 const moment = require('moment');
 const fs = require('fs');
 
-// get todays date
+// get todays date and sets it to object passed into this
 function setCurrentDate(data){
     if(typeof data === 'undefined'){
       console.error("No object passed to set the current date to in the setCurrentDate function");
+      return data;
     }
   
     data.date = moment().format('YYYY-MM-DD');
     return data;
 }
   
-// Fetches an API and returns 
+// fetches an API and returns mutated object that was passed into this function
 function fetchAPI(data, url, options){
     fetch(url, options)
     .then(res => res.json())
@@ -35,6 +36,7 @@ function fetchAPI(data, url, options){
 function downloadImageFromURL(url, folderDestination){
     if(typeof url === ('undefine') || url === ''){
       console.error("No URL passed to image download function");
+      return;
     }
   
     const imageDownloaderOptions = {
