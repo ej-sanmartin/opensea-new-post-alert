@@ -24,8 +24,10 @@ The Gatsby Theme I am using didn't have many easy ways to fetch an API to the si
 - Express
 - Fetch
 - Image-Downloader
+- Toad-Scheduler
 - Moment
 - Nodemailer
+- fs-extra
 
 
 ## Contributions
