@@ -77,13 +77,13 @@ async function createMDXFile(data, folderDestination){
   
     const mdxFileContent =
     `---\n
-     cover: ./${data.title}.\n
-     date: ${data.date}\n
-     title: ${data.title}\n
-     areas:\
-      ${data.externalLink}\n
-     ---\n
-     ${data || data.description ? data.description : `No description provided.`}
+cover: ./${data.title}.\n
+date: ${data.date}\n
+title: ${data.title}\n
+areas:\
+  ${data.externalLink}\n
+---\n
+${data || data.description ? data.description : `No description provided.`}
     `;
   
     try {

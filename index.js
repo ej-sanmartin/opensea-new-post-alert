@@ -74,5 +74,5 @@ const task = new AsyncTask(
   },
   (err) => { console.error(`Roadblock hit: ${err}`); }
 );
-const job = new SimpleIntervalJob({ seconds: 10 }, task );
+const job = new SimpleIntervalJob({ seconds: parseInt(process.env.SECONDS, 10) }, task );
 scheduler.addSimpleIntervalJob(job);
