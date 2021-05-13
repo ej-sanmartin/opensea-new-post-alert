@@ -24,19 +24,21 @@ function fetchAPI(data, url, options){
         data.externalLink = json.assets[0].external_link;
         data.description = json.assets[0].description;
         data.id = json.assets[0].id;
-
-        // console.log(JSON.stringify(data));
-
         return data;
     })
-    .catch(err => console.error(`Error fetching from OpenSea API: ${err}`));
+    .catch(err => {
+      console.error(`Error fetching from OpenSea API: ${err}`);
+      return data;
+    });
+
+    return data;
 }
 
 // image downloader setup and application
-function downloadImageFromURL(url, folderDestination){
+function downloadImageFromURL(url, folderDestination, data){
     if(typeof url === ('undefine') || url === ''){
       console.error("No URL passed to image download function");
-      return;
+      return data;
     }
   
     const imageDownloaderOptions = {
@@ -48,15 +50,23 @@ function downloadImageFromURL(url, folderDestination){
     download.image(imageDownloaderOptions)
     .then(({ filename }) => {
       console.log("Saved to: ", filename)
+      data.imageFileName = filename;
+      data.imageFilePath = `${folderDestination}/${filename}`;
+      return data
     })
-    .catch((err) => console.error(`Error downloading image: ${err}`));
+    .catch((err) => {
+      console.error(`Error downloading image: ${err}`);
+      return data;
+    });
+
+    return data;
 }
   
 // create .mdx file
-function createMDXFile(data, folderDestination){
+function createMDXFile(data, folderDestination, data){
     if(typeof data === ('undefined') || data === {}){
       console.error("Data passed is undefined or empty.");
-      return;
+      return data;
     }
   
     const mdxFileContent = ` ---\n
@@ -72,9 +82,13 @@ function createMDXFile(data, folderDestination){
     fs.writeFile(`${folderDestination}/index.mdx`, mdxFileContent, err => {
     if(err) {
       console.error(`Error writing new file: ${err}`);
-      return;
+      return data;
     }
     });
+
+    data.mdxFileName = `index.mdx`;
+    data.mdxFilePath = `${folderName}/${data.mdxFileName}`;
+    return data;
 } 
   
 module.exports = {
