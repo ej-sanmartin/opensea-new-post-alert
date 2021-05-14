@@ -23,10 +23,13 @@ app.listen(port, () => console.log("Server is running..."));
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
+    secure: true,
     auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD
+    },
+    tls: {
+      rejectUnauthorized: false
     }
 });
 
