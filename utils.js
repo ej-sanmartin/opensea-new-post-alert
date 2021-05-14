@@ -103,10 +103,13 @@ async function sendEMailAsync(data, transporter, callback){
     from: "Your NFT Alert Server | OpenSea.io API",
     to: process.env.EMAIL,
     subject: "Here is your new NFT post!",
-    html: `<h1>Congrats on the new NFT!</h1>
-    <p>Edgar, attached is your NFT image and data for your site</p>
-    <br>
-    <p>Thank you</p>`,
+    html: `
+    <div style="margin-left: 1em;">
+      <h1>Congrats on the new NFT!</h1>
+      <p style="font-size: 1.15em">Edgar, attached is your NFT image and data for your site</p>
+      <br>
+      <p style="font-size: 1.15em">Thank you!</p>
+    </div>`,
     attachments: [
       {
         filename: data.imageFileName,
