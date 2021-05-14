@@ -4,6 +4,7 @@
   "description": "Creates folders and alerts me via email whenever my account acquires a new NFT",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo no tests here \n"
   },
   "author": "Edgar J San Martin",
