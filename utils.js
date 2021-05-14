@@ -100,7 +100,7 @@ ${data || data.description ? data.description : `No description provided.`}
 // nodemailer function called to send email with career route form
 async function sendEMailAsync(data, transporter, callback){
   let mailOptions = {
-    from: "Your NFT Alert Server | OpenSea.io API",
+    from: process.env.EMAIL,
     to: process.env.EMAIL,
     subject: "Here is your new NFT post!",
     html: `
