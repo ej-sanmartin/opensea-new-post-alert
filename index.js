@@ -20,7 +20,7 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => console.log("Server is running..."));
 
 // Setting up nodemailer to send to my email directly
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport("SMTP", {
     service: "hotmail",
     auth: {
       user: process.env.EMAIL,
