@@ -49,7 +49,7 @@ async function downloadImageFromURL(url, folderDestination, data){
 
     try {
       response = await downloadImageAsync(imageDownloaderOptions);
-      data.imageFileName = `${response.filename}.png`;
+      data.imageFileName = `${response.filename}.jpg`;
       data.imageFilePath = response.filename;
     } catch(e){
       console.error(`Error caught while downloading image from URL: ${e}`);
@@ -77,11 +77,11 @@ async function createMDXFile(data, folderDestination){
   
     const mdxFileContent =
     `---\n
-cover: ./${data.title}.\n
-date: ${data.date}\n
-title: ${data.title}\n
-areas:\
-  ${data.externalLink}\n
+cover: "./${data.title}"\n
+date: "${data.date}"\n
+title: "${data.title}"\n
+areas:\n
+  -${data.externalLink}\n
 ---\n
 ${data || data.description ? data.description : `No description provided.`}
     `;
