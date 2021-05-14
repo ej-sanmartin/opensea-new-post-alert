@@ -54,10 +54,10 @@ const task = new AsyncTask(
   async () => {
     try {
       nftData = await(fetchAPI(nftData, openSeaAPIUrl, openSeaAPIOptions));
-      nftData.date = setCurrentDate();
-      nftData = await(downloadImageFromURL(nftData.imageURL, folderName, nftData));
-      nftData = await(createMDXFile(nftData, folderName));
       if(nftData.id != lastPostID){
+        nftData.date = setCurrentDate();
+        nftData = await(downloadImageFromURL(nftData.imageURL, folderName, nftData));
+        nftData = await(createMDXFile(nftData, folderName));
         sendEMailAsync(nftData, transporter, info => console.log("Request Sent!"));
       } else {
         console.log("Did not send an email this time.");
