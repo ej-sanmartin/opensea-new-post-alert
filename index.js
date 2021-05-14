@@ -21,9 +21,7 @@ app.listen(port, () => console.log("Server is running..."));
 
 // Setting up nodemailer to send to my email directly
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
+    service: "hotmail",
     auth: {
       user: process.env.EMAIL,
       pass: process.env.PASSWORD
