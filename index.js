@@ -45,7 +45,7 @@ try {
 
 // setup for OpenSea.io API
 const openSeaAPIUrl = `https://api.opensea.io/api/v1/assets?owner=${process.env.ETH_ADDRESS}`;
-const openSeaAPIOptions = { method: 'GET', headers: { 'X-API-KEY': process.env.OPENSEA_API_KEY } };
+const openSeaAPIOptions = { method: 'GET', headers: { 'X-API-KEY': `${process.env.OPENSEA_API_KEY}` } };
 
 // initialize and setup scheduler
 const scheduler = new ToadScheduler();
