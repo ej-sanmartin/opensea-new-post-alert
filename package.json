@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "develop": "nodemon index.js",
+    "migrate": "npx knex migrate:latest",
     "test": "echo no tests here \n"
   },
   "author": "Edgar J San Martin",
@@ -14,13 +16,17 @@
     "express": "^4.17.1",
     "fs-extra": "^10.0.0",
     "image-downloader": "^4.0.2",
+    "knex": "^0.95.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.0",
+    "pg": "^8.6.0",
+    "sqlite3": "^5.0.2",
     "toad-scheduler": "^1.0.2"
   },
   "devDependencies": {
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7"
   }
 }
