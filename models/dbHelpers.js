@@ -1,7 +1,8 @@
 const db = require('../dbConfig');
 
 async function add(image_id){
-    await db('images').insert({open_sea_id: image_id});
+    await db('images').insert({open_sea_id: image_id}, ['open_sea_id']); // how to return items the postgreSQL way
+    // await db('images').insert({open_sea_id: image_id}); sqlite3
 }
 
 async function isTableEmpty(){
