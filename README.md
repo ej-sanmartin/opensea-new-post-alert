@@ -32,6 +32,9 @@ The Gatsby Theme I am using didn't have many easy ways to fetch an API to the si
 - Moment
 - Nodemailer
 - fs-extra
+- Knex
+- SQLite3
+- PostgreSQL
 
 
 ## Contributions
