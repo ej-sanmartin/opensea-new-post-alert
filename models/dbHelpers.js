@@ -10,10 +10,7 @@ async function isTableEmpty(){
 }
 
 async function findMostRecentID(){
-    return await db('images')
-                           .select('open_sea_id')
-                           .orderBy('id', 'desc')
-                           .limit(1);
+    return await db('images').select('open_sea_id').orderBy('id', 'desc').limit(1);
 }
 
 module.exports = {
